@@ -11,12 +11,14 @@ In this lab, I was able to practice this scenario (source: Kodekloud) of configu
 Per Microsoft’s online documentation, we have the options for virtual network peering within the same region or we can opt for global network peering, where needed. Each option has a different rate for inbound and outbound data transfers based on the region where your VNets are deployed. There are many benefits to peering for connecting our virtual networks, such as low latency, high bandwidth, and private connectivity between our resources in different virtual networks.
 
 The following steps were taken to allow me to implement VNet Peering:
+<ul>
+  <li> Created two virtual networks </li>
+  <li> Deployed a virtual machine (VM) into each virtual network </li>
+  <li> Connected two virtual networks with a virtual network peering </li>
+  <li> Tested communication between the VMs </li>
+  <li> Deploying the Infrastructure (Steps 1–2) </li>
+</ul>
 
-Created two virtual networks
-Deployed a virtual machine (VM) into each virtual network
-Connected two virtual networks with a virtual network peering
-Tested communication between the VMs
-Deploying the Infrastructure (Steps 1–2)
 I accomplished steps 1–2 by using a PowerShell script to quickly deploy my network infrastructure. In this deployment, we have two virtual networks, eus-vnet and wus-vnet, each deployed to different Azure Regions (East US and West US 3). We also have two virtual machines (eus-prod-server and wus-prod-server) both with Linux Ubuntu as the OS image. A public IP address was configured for the East US server to allow me to connect to it over the public Internet. A public IP address is a requirement in order to allow any Azure resource to receive inbound communication from the Internet. Both servers have private IP addresses that were assigned by Azure, taken from the address space of the virtual network subnets where the VMs were deployed to.
 
 
