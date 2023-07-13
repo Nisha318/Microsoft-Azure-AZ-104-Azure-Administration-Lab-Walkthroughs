@@ -4,10 +4,12 @@ Now, there are various types of Azure resources that we can deploy into our Virt
 
 While all resources in a VNet have the ability to communicate outbound to the Internet, by default, there are some additional configuration steps that need to be taken to allow: 1) communication between different VNets 2) communication with on-premises networks and 3) inbound communications from the Public Internet.
 
-<img src="https://github.com/Nisha318/Microsoft-Azure-Projects/blob/main/Connecting%20Azure%20Virtual%20Networks%20Using%20VNet%20Peering/Lab%20Diagram.png">
-<b> Diagram of my lab scenario </b>
+<figure>
+<img src="https://github.com/Nisha318/Microsoft-Azure-Projects/blob/main/Connecting%20Azure%20Virtual%20Networks%20Using%20VNet%20Peering/Lab%20Diagram.png" alt ="lab topology diagram ">
+<figcaption> <b> Diagram of my lab scenario </b> </figcaption>
+</figure>
 
-In this lab, I was able to practice this scenario (source: Kodekloud) of configuring the easiest solution for implementing intersite connectivity between different Azure VNets, Virtual Network Peering!!
+In this lab, I was able to practice this scenario (source: Kodekloud.com) of configuring the easiest solution for implementing intersite connectivity between different Azure VNets, Virtual Network Peering!!
 
 Per Microsoft’s online documentation, we have the options for virtual network peering within the same region or we can opt for global network peering, where needed. Each option has a different rate for inbound and outbound data transfers based on the region where your VNets are deployed. There are many benefits to peering for connecting our virtual networks, such as low latency, high bandwidth, and private connectivity between our resources in different virtual networks.
 
