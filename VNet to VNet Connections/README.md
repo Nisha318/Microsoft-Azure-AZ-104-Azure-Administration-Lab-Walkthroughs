@@ -1,6 +1,5 @@
----
-
 <h1> V-Net to V-Net Connections in Azure </h1> 
+
 
 By deploying a VPN Gateway into a dedicated "gateway subnet" of our virtual networks, we can create one or more encrypted tunnel connections between the VPN Gateway of our Azure V-Net and any of the following:
 other virtual networks (VNet-to-VNet connections)
