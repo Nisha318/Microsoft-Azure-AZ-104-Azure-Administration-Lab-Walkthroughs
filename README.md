@@ -23,7 +23,7 @@
 
 <a href="https://github.com/Nisha318/Microsoft-Azure-Projects/blob/main/AZ-700%20Lab%20Walkthroughs%20-%20Designing%20Azure%20Network%20Solutions.md"> Lab Walkthroughs - AZ-700 Designing and Implementing Microsoft Azure Networking Solutions </a>
 
-<a href="https://github.com/Nisha318/Microsoft-Azure-Projects/blob/main/AZ-700%20Lab%20Walkthroughs%20-%20Designing%20Azure%20Network%20Solutions.md"> Lab Walkthroughs - AZ-500 Microsoft Azure Security Technologies </a>
+<a href="https://github.com/Nisha318/Microsoft-Azure-Projects/blob/main/Exam%20AZ-500%20Lab%20Walkthroughs%20-%20Microsoft%20Azure%20Security%20Technologies.md"> Lab Walkthroughs - AZ-500 Microsoft Azure Security Technologies </a>
 
 
 
