@@ -1,8 +1,8 @@
-As I am progressing in my Microsoft Azure studies, I am learning more about the different networking capabilities that the service offers for establishing connectivity to our virtual networks (VNets)that are hosted in the Azure cloud. For intersite connectivity options, Azure offers several options that can be used alone or in various combinations to achieve simple (Azure-to-Azure) or more complex (Azure to On-premises) solutions.
+As I progress in my Microsoft Azure studies, I am learning more about the different networking capabilities that the service offers for establishing connectivity to our virtual networks (VNets)that are hosted in the Azure cloud. For intersite connectivity options, Azure offers several options that can be used alone or in various combinations to achieve simple (Azure-to-Azure) or more complex (Azure to On-premises) solutions.
 
-Now, there are various types of Azure resources that we can deploy into our Virtual Networks and by using VNets we are able to communicate between these Azure resources. Well, sort of. Virtual Networks are isolated from other Virtual Networks in the Azure Cloud. So this means that if I deploy virtual machines (VMs) into multiple VNets, only those VMs that live in the same VNet will be able to communicate with each other, thanks to the automatic system routes.
+Now, we can deploy various types of Azure resources into our Virtual Networks, and by using VNets, we can establish connectivity between these Azure resources. Well, sort of. Virtual Networks are isolated from other Virtual Networks in the Azure Cloud. So this means that if I deploy virtual machines (VMs) into multiple VNets, only those VMs that live in the same VNet will be able to communicate with each other, thanks to the automatic system routes.
 
-While all resources in a VNet have the ability to communicate outbound to the Internet, by default, there are some additional configuration steps that need to be taken to allow: 1) communication between different VNets 2) communication with on-premises networks and 3) inbound communications from the Public Internet.
+While all resources in a VNet can communicate outbound to the Internet, by default, some additional configuration steps need to be taken to allow: 1) communication between different VNets 2) communication with on-premises networks, and 3) inbound communications from the Public Internet.
 
 <figure>
 <img src="https://github.com/Nisha318/Microsoft-Azure-Projects/blob/main/Connecting%20Azure%20Virtual%20Networks%20Using%20VNet%20Peering/Lab%20Diagram.png" alt ="lab topology diagram ">
@@ -27,56 +27,100 @@ I accomplished steps 1–2 by using a PowerShell script to quickly deploy my net
 
 Network infrastructure deployed using a PowerShell script
 
+```bash
+$RGName = "ContosoResourceGroup"
+   
+New-AzResourceGroupDeployment -ResourceGroupName $RGName -TemplateFile ManufacturingVMazuredeploy.json -TemplateParameterFile ManufacturingVMazuredeploy.parameters.json
+```
+![image](https://github.com/user-attachments/assets/98bff8eb-96d1-49b7-a3c8-d0f2d6d5e88b)
+
+![image](https://github.com/user-attachments/assets/6928379e-700c-4588-9ff2-88a1c2f5e400)
+
 Two virtual machines deployed to two different virtual networks
-The East US server has a Public IP address of 52.149.224.175 and a private IP address of 10.0.0.4. This is the server that I will connect directly to from my PC over the public Internet.
+
+![image](https://github.com/user-attachments/assets/469d1724-c873-4028-b098-0906bbf7b514)
 
 
-Virtual machine (eus-prod-server) deployed to East US region
-The West US server does not have a public IP address. Therefore, we are not able to connect to it directly from the Internet, but we will utilize our connection to the East US server and from that server, we will be able to connect to the West US server. The wus-prod-server has a private IP address of 192.168.1.4.
+![image](https://github.com/user-attachments/assets/c8e80aa2-debe-44ff-9d23-7b64df89750f)
 
 
-Virtual machine (wus-prod-server) deployed to West US 3 region
-Next, I launched my SSH client to establish a connection from my PC to the server located in East US and I logged in using the credentials that I specified in the PowerShell script.
+![image](https://github.com/user-attachments/assets/f3d6c238-d187-4a27-804c-08cd3761fda2)
 
 
-Using Putty SSH client to connect to eus-prod-server @52.149.224.175
-
-SSH connection to eus-prod-server is established
-By default, this virtual machine will have outbound connectivity to the Internet, as demonstrated in my ping out from the VM to Google’s DNS service, 8.8.4.4.
 
 
-My next test was a ping out to the private IP address of the server located in West US (wus-prod-server ) @ 192.168.1.4. However, I did not receive any replies from the West US prod server, as indicated in the image listed below. This was expected because I know that the two servers are located in different virtual networks. As mentioned earlier, Virtual Networks in Azure are isolated from each other and we must apply additional configuration in order to allow this communication to take place between them. This is where the VNet peering comes into play that can help us to bridge that communication in order to get the two VNets connected so that their resources will be able to communicate with each other.
+![image](https://github.com/user-attachments/assets/ae1790e8-7aad-4ea6-86b6-8c2ffef334d6)
 
 
-3. Create the Virtual Network Peering Connections
-From the Virtual Network located in the West US region (wus-vnet), I navigated to the “Peerings” blade in order to set up this peering connection.
+![image](https://github.com/user-attachments/assets/df241d4e-f2c0-4b0f-bd84-8b931f57ebb8)
 
 
-West US Virtual Network blade
-From this peering configuration screen we see a message indicating that “For peering to work, two peering links must be created. By selecting remote virtual network, Azure will create both peering links.” This means that we must have a link created between both ends of the virtual networks in order for them to peer to each other. However, we find that Azure creates the remote end connection for us once we have completed the configuration on the first VNet, wus-vnet. Well, it does so when creating a peering link from the Azure Portal versus creating them from the Azure CLI.
+![image](https://github.com/user-attachments/assets/16940963-e667-403d-831c-5e6bceb967e0)
 
-On this peerings configuration screen, we are creating it from the wus-vnet. Therefore, the initial peering link listed below is referring to the West US VNet and we appropriately named it “west-to-east”.
+![image](https://github.com/user-attachments/assets/5752b51d-797f-4406-bc8c-62956e95bd83)
 
+![image](https://github.com/user-attachments/assets/14c2c8bb-c5ca-4ccf-97fc-b69b44cb9f08)
 
-Once we scroll down on this screen, we now need to provide information about the remote virtual network by selecting it from the list. Here we named the remote virtual network peering link “east-to-west”. Click on Add
-
-
-Once the creation process was completed, I was able to refresh the screen on the wus-vnet’s “Peerings” blade and my local link from this West US virtual network displayed a Peering status of “Connected”.
+## Task 3: Test the connection between the VMs
 
 
-Connected link from West US to East US Virtual Networks
-I then made my way over to the Peerings page of the East US Virtual Network (eus-vnet) and found that the Peering Status of the remote link was also in a “Connected” status.
+![image](https://github.com/user-attachments/assets/e0940f1f-a10c-4657-bdf2-9f69d48cfe48)
+
+![image](https://github.com/user-attachments/assets/5710b426-8183-48b0-8e75-eb5f79970651)
+
+![image](https://github.com/user-attachments/assets/e3862adf-1c78-48b9-8e19-4f4854716503)
+
+![image](https://github.com/user-attachments/assets/c6162b40-75b0-40f1-af6c-b8555f327bcc)
 
 
-Connected link from East US to West US Virtual Networks
-4. Testing Communication Between the Virtual Machines
-After confirming that I had a connected peering link from both virtual networks, from East US to West US and from West US to East US, I then tested my connectivity from the eus-prod-server to the wus-prod-server, and this time my connectivity test was successful!! I received replies from the server wus-prod-server @ 192.168.1.4 as per the image below.
+## Task 4: Create VNet peerings between CoreServicesVnet and ManufacturingVnet
+
+![image](https://github.com/user-attachments/assets/991dddec-e783-4569-b028-a737245032fb)
+
+![image](https://github.com/user-attachments/assets/b10919ae-917d-4fca-8213-03fc16d9ce5b)
 
 
-With my testing completed successfully, I was able to confirm that Virtual Network Peering can help me to enable private connectivity between two Azure-to-Azure resources when I need this communication to take place between two resources that live in different VNets on the Azure Cloud.
-
-Finally, I made sure to clean up by deleting all resources from my Azure subscription that are no longer needed so that I won’t incur any billing for things that aren’t needed. Please make sure that you do the same if you are practicing labs in your own Azure environment.
+![image](https://github.com/user-attachments/assets/6e661411-66f4-4e5a-9097-3ed88ad8c174)
 
 
-Deleting resources that are no longer needed
+![image](https://github.com/user-attachments/assets/f3067579-ddc7-4df9-84e2-0a8347e907c5)
+
+
+![image](https://github.com/user-attachments/assets/6bd7465c-8399-4d83-bc1a-760d19a4a109)
+
+![image](https://github.com/user-attachments/assets/49367e61-bf73-4076-b7ac-d2557c455003)
+
+![image](https://github.com/user-attachments/assets/bb149d27-ff7a-4196-9d6c-f0f146f834d5)
+
+
+![image](https://github.com/user-attachments/assets/4b98f300-87f8-4c9b-9abe-2529591cb24d)
+
+
+![image](https://github.com/user-attachments/assets/a927dce8-aff7-4d2c-a11b-1195f6032e47)
+
+
+![image](https://github.com/user-attachments/assets/987ec0a1-46ec-4632-be5b-28ac8c1cb2c2)
+
+![image](https://github.com/user-attachments/assets/ceb7602e-450e-4135-b63d-df608cb98614)
+
+
+![image](https://github.com/user-attachments/assets/dd5b075f-6df7-4f52-bc38-e9d8e129595e)
+
+![image](https://github.com/user-attachments/assets/6e0ce6f1-c1c3-491f-95c3-e01a41975c36)
+
+![image](https://github.com/user-attachments/assets/080d3c42-e147-4f78-a5b0-ce6a930778f3)
+
+![image](https://github.com/user-attachments/assets/f01bde7e-d75f-4646-8756-1d0cfee43144)
+
+![image](https://github.com/user-attachments/assets/eed86abb-19ba-47bd-ac90-142f584eb750)
+
+
+
+
+
+
+
+
+
+
 
